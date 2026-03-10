@@ -1,52 +1,30 @@
 <!DOCTYPE html>
-<!--
-  ============================================================
-  CO/COI MAPPING FOR THIS FILE
-  ============================================================
-  CO1 – Apply Internet Fundamentals, HTML & Introductory CSS Styling
-        COI-1 (Btl-1): Remembering  — DOCTYPE, meta tags, HTML document structure, CSS reset
-        COI-2 (Btl-2): Understanding — how CSS properties, selectors, and the box model work
-        COI-3 (Btl-3): Applying      — building a styled, multi-element HTML page with CSS
-
-  CO2 – Apply HTML Forms, Semantic Tags & Comprehensive CSS Layouts
-        COI-1 (Btl-1): Remembering  — form elements (input, select, label, button), semantic tags (nav, h1)
-        COI-2 (Btl-2): Understanding — how CSS Grid/Flexbox layouts and form structures work
-        COI-3 (Btl-3): Applying      — two-column dashboard, booking form, login/register form
-
-  CO3 – Apply JavaScript Programming Essentials
-        COI-1 (Btl-1): Remembering  — variables, functions, conditionals, loops, regex, Math methods
-        COI-2 (Btl-2): Understanding — how validation logic, array methods, and control flow work
-        COI-3 (Btl-3): Applying      — login/register validation, ticket booking, render/filter functions
-
-  CO4 – Apply JavaScript Interactivity, DOM
-        COI-1 (Btl-1): Remembering  — DOM methods: getElementById, classList, style, textContent, innerHTML
-        COI-2 (Btl-2): Understanding — how event listeners and DOM updates drive UI changes
-        COI-3 (Btl-3): Applying      — auth panel switching, dynamic ticket cards, search/filter UI
-
-  CO5 – Apply Advanced Web Development & Deployment
-        COI-1 (Btl-1): Remembering  — localStorage API, Canvas API, requestAnimationFrame, CSS keyframes
-        COI-2 (Btl-2): Understanding — how state persistence, canvas loops, and dark-mode systems work
-        COI-3 (Btl-3): Applying      — animated sky canvas, localStorage store, dark-mode, session control
-  ============================================================
--->
+<!-- ============================================================
+     SkyDesk — Flight Management Portal
+     CO COVERAGE SUMMARY:
+     CO1 — Internet Fundamentals, HTML & Introductory CSS Styling
+     CO2 — HTML Forms, Semantic Tags & Comprehensive CSS Layouts
+     CO3 — JavaScript Programming Essentials
+     CO4 — JavaScript Interactivity & DOM
+     CO5 — Advanced Web Development & Deployment
+============================================================ -->
 <html lang="en">
 <head>
-<!-- CO1 (Btl-1/2): Internet Fundamentals — charset declaration and viewport meta for responsive design -->
+<!-- CO1: Basic HTML document structure — charset, viewport meta, page title -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SkyDesk — Flight Management Portal</title>
 <style>
-/* CO1 (Btl-1/2/3): Introductory CSS — universal box-sizing reset; base html/body height, font-family, and background colour */
+/* CO1: CSS reset — box-sizing, margin/padding reset applied universally */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* CO1: Base styles — font-family, height, and background colour */
 html,body{height:100%;font-family:system-ui,-apple-system,sans-serif}
 body{background:#f0f4f8}
 
 /* ══════════════════════════════════════
    AUTH OVERLAY
+   CO2: Semantic layout using flexbox for side-by-side login panel
 ══════════════════════════════════════ */
-/* CO2 (Btl-2/3): CSS Layouts — full-screen flex overlay split into sky panel (flex:1.2) and fixed-width form panel */
-/* CO1 (Btl-3): Applying CSS — gradient backgrounds, absolute positioning, overflow:hidden for sky decorations */
-/* CO5 (Btl-1/2/3): Advanced CSS — @keyframes bob (plane bounce) and @keyframes pulse (tag dot) animations */
 .auth-overlay{position:fixed;inset:0;z-index:999;display:flex;}
 .sky-side{flex:1.2;position:relative;overflow:hidden;background:linear-gradient(160deg,#dbeafe 0%,#bfdbfe 20%,#93c5fd 45%,#60a5fa 70%,#3b82f6 100%);}
 #skyCanvas{position:absolute;inset:0;width:100%;height:100%}
@@ -55,6 +33,7 @@ body{background:#f0f4f8}
 .sky-info{position:absolute;bottom:0;left:0;right:0;padding:48px 52px;}
 .brand{display:flex;align-items:center;gap:13px;margin-bottom:26px}
 .brand-plane{font-size:30px;display:inline-block;animation:bob 5s ease-in-out infinite;filter:drop-shadow(0 4px 12px rgba(30,64,175,.35));}
+/* CO1: CSS animation — @keyframes bob creates floating plane effect */
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-9px) rotate(-2deg)}}
 .brand-name{font-size:28px;font-weight:900;letter-spacing:9px;text-transform:uppercase;color:#1e3a8a;text-shadow:0 2px 16px rgba(30,64,175,.2);}
 .sky-tagline{font-size:14px;color:#1e40af;line-height:1.8;margin-bottom:34px;opacity:.85;}
@@ -62,14 +41,7 @@ body{background:#f0f4f8}
 .sky-stat{display:flex;flex-direction:column;gap:3px}
 .stat-n{font-size:26px;font-weight:900;color:#1d4ed8;letter-spacing:1px;text-shadow:0 2px 8px rgba(29,78,216,.25);}
 .stat-l{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#3b82f6;opacity:.8;}
-/* CO2 (Btl-2/3): HTML Forms & CSS Layout — form-side: fixed width, flex centering, overflow-y scroll for login/register */
-/* CO5 (Btl-3): Advanced CSS — @keyframes up slide-in animation applied to .form-panel on display */
-/* CO1 (Btl-3): CSS Styling — .tag badge, .form-title, .form-sub, .form-rule decorative typography styles */
-/* CO2 (Btl-2/3): CSS Layouts — .fields flex column, .row2 two-column CSS Grid for paired inputs */
-/* CO2 (Btl-1/2/3): HTML Forms CSS — .inp-wrap icon overlay, input focus ring (border-color, box-shadow), placeholder colour */
-/* CO3 (Btl-3): JS links to .msg-err / .msg-ok — shown/hidden by showMsg() based on validation outcomes */
-/* CO4 (Btl-3): DOM — .form-side.shake toggled via classList.add/remove + setTimeout on failed login attempt */
-/* CO5 (Btl-3): Advanced CSS — @keyframes shake for wrong-password feedback animation on the form panel */
+.form-side{width:440px;min-width:390px;background:#ffffff;display:flex;align-items:center;justify-content:center;padding:44px 50px;position:relative;overflow-y:auto;box-shadow:-8px 0 40px rgba(30,64,175,.08);}
 .form-side::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#60a5fa,#93c5fd);}
 .form-panel{width:100%;animation:up .38s cubic-bezier(.22,.68,0,1.15) both}
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -79,14 +51,20 @@ body{background:#f0f4f8}
 .form-title{font-size:46px;font-weight:900;line-height:.97;color:#0f172a;margin-bottom:10px;letter-spacing:-1.5px;}
 .form-sub{font-size:13px;color:#64748b;margin-bottom:28px;letter-spacing:.2px}
 .form-rule{width:40px;height:3px;background:linear-gradient(90deg,#3b82f6,#93c5fd);border-radius:2px;margin-bottom:28px;}
+/* CO2: Form layout — flexbox column arrangement for input fields */
 .fields{display:flex;flex-direction:column;gap:15px;margin-bottom:22px}
+/* CO2: CSS Grid — 2-column layout for side-by-side form fields */
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field{display:flex;flex-direction:column;gap:6px}
+/* CO2: Form label styling — uppercase, tracked lettering for clarity */
 .field label{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#94a3b8;}
+/* CO2: Input wrapper with icon overlay using absolute positioning */
 .inp-wrap{position:relative;display:flex;align-items:center}
 .inp-wrap svg{position:absolute;left:12px;width:15px;height:15px;color:#cbd5e1;pointer-events:none;transition:color .2s;}
+/* CO2: Styled input — padding, border, border-radius, focus state */
 .inp-wrap input{width:100%;padding:11px 12px 11px 38px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;color:#0f172a;font-size:13px;outline:none;transition:border-color .2s,background .2s,box-shadow .2s;font-family:inherit;}
 .inp-wrap input::placeholder{color:#cbd5e1}
+/* CO2: CSS :focus pseudo-class for interactive input highlighting */
 .inp-wrap input:focus{border-color:#3b82f6;background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.12);}
 .inp-wrap:focus-within svg{color:#3b82f6}
 .msg{font-size:12px;padding:10px 13px;border-radius:8px;display:none;margin-bottom:14px;letter-spacing:.2px;}
@@ -101,14 +79,15 @@ body{background:#f0f4f8}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:#f1f5f9}
 .btn-ghost{width:100%;padding:11px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;color:#64748b;font-size:13px;cursor:pointer;transition:border-color .2s,color .2s,background .2s;font-family:inherit;letter-spacing:.3px;}
 .btn-ghost:hover{border-color:#3b82f6;color:#2563eb;background:#eff6ff}
+/* CO2: CSS animation — shake effect triggered on invalid login */
 .form-side.shake{animation:shake .4s ease}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 
 /* ══════════════════════════════════════
    DARK MODE TOKENS
+   CO5: CSS custom properties (variables) for theme switching
+        toggled dynamically via JavaScript (CO4)
 ══════════════════════════════════════ */
-/* CO1 (Btl-2/3): CSS — :root custom properties define the full light-mode design token system */
-/* CO5 (Btl-2/3): Advanced Web Dev — body.dark-mode overrides every token for dark theme; class toggled by JS */
 :root{
   --bg:#f0f6ff;
   --surface:#ffffff;
@@ -148,15 +127,13 @@ body.dark-mode{
 
 /* ══════════════════════════════════════
    MAIN APP SHELL
+   CO2: Page layout — flex column for sticky nav + scrollable content
 ══════════════════════════════════════ */
-/* CO2 (Btl-2/3): CSS Layouts — app-shell uses flex column for full-height dashboard structure */
-/* CO4 (Btl-3): DOM Interactivity — body class 'app-active' is added by checkAuth() to reveal the dashboard after login */
 .app-shell{display:none;flex-direction:column;min-height:100vh;background:var(--bg);color:var(--text);}
 body.app-active .app-shell{display:flex}
 
-/* ── Topnav ── */
-/* CO2 (Btl-1/2/3): Semantic Tags & CSS Layout — <nav> uses sticky positioning + flexbox for brand and controls row */
-/* CO1 (Btl-3): CSS Styling — .nav-btn hover states, danger colour variant, transition effects */
+/* ── Topnav ──
+   CO2: Semantic <nav> styled as sticky top bar using flexbox */
 .topnav{
   position:sticky;top:0;z-index:50;
   background:var(--nav-bg);
@@ -197,10 +174,9 @@ body.app-active .app-shell{display:flex}
 .nav-btn.danger:hover{background:#fef2f2;border-color:#ef4444}
 
 /* ── Page content ── */
-/* CO2 (Btl-2/3): CSS Layout — app-content uses flex:1 to fill remaining height, max-width + auto margin for centred container */
+.app-content{flex:1;padding:28px 32px;max-width:1200px;width:100%;margin:0 auto;}
 
 /* ── Section header ── */
-/* CO1 (Btl-3): CSS Styling — section-title uses ::before pseudo-element blue bar, uppercase tracking, and flex alignment */
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .section-title{
   font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
@@ -208,9 +184,8 @@ body.app-active .app-shell{display:flex}
 }
 .section-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--blue2);border-radius:2px;}
 
-/* ── Stats row ── */
-/* CO2 (Btl-2/3): Comprehensive CSS Layouts — CSS Grid repeat(4,1fr) equal-width stat cards; responsive override at 900px */
-/* CO1 (Btl-3): CSS Styling — stat-card hover lift, ::before gradient top-bar, box-shadow via CSS variable */
+/* ── Stats row ──
+   CO2: CSS Grid — 4-column responsive stats dashboard layout */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
 .stat-card{
   background:var(--surface);
@@ -231,13 +206,12 @@ body.app-active .app-shell{display:flex}
 .stat-card-val{font-size:26px;font-weight:900;color:var(--text);letter-spacing:-1px;}
 .stat-card-lbl{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);}
 
-/* ── Two-col layout ── */
-/* CO2 (Btl-2/3): Comprehensive CSS Layouts — CSS Grid 1fr:1.55fr asymmetric split for booking form vs passes panel */
+/* ── Two-col layout ──
+   CO2: CSS Grid — asymmetric 2-column layout for booking form + passes panel */
 .two-col{display:grid;grid-template-columns:1fr 1.55fr;gap:20px;align-items:start;}
 
-/* ── Booking form card ── */
-/* CO2 (Btl-1/2/3): HTML Forms & CSS — .form-field label/input/select styling, focus ring, .form-row two-col grid for paired fields */
-/* CO1 (Btl-3): CSS Styling — .book-btn gradient button with hover lift, ::after shine overlay */
+/* ── Booking form card ──
+   CO2: Styled form container card with border, shadow, rounded corners */
 .book-card{
   background:var(--surface);
   border:1px solid var(--border);
@@ -286,8 +260,6 @@ body.app-active .app-shell{display:flex}
 .book-btn:active{transform:translateY(0)}
 
 /* ── Passes panel ── */
-/* CO2 (Btl-2/3): CSS Layouts — passes toolbar flexbox with flex:1 search box + filter select + clear button */
-/* CO4 (Btl-3): DOM — search input and filter select trigger render() via oninput/onchange events in JS */
 .passes-card{
   background:var(--surface);
   border:1px solid var(--border);
@@ -333,7 +305,6 @@ body.app-active .app-shell{display:flex}
 .clear-all-btn:hover{background:#fef2f2}
 
 /* ── Empty state ── */
-/* CO1 (Btl-3): CSS Styling — centred empty-state placeholder shown by render() when no tickets match filters */
 .empty-state{
   text-align:center;padding:48px 20px;
 }
@@ -341,10 +312,6 @@ body.app-active .app-shell{display:flex}
 .empty-text{font-size:14px;color:var(--text3);font-weight:500}
 
 /* ── Boarding pass cards ── */
-/* CO2 (Btl-2/3): CSS Layouts — .pass-card flex row: colour stripe + body (flex:1) + stub (fixed 90px width) */
-/* CO5 (Btl-1/2/3): Advanced CSS — @keyframes cardIn fade/slide animation on each dynamically created card */
-/* CO1 (Btl-3): CSS Styling — class-based colour stripes (.stripe-economy/business/first), badge pills (.cls-*) */
-/* CO4 (Btl-3): DOM — .void-btn onclick calls removeTicket(); .pass-id onclick calls showDetails() */
 .passes-list{display:flex;flex-direction:column;gap:10px;max-height:620px;overflow-y:auto;padding-right:4px;}
 .passes-list::-webkit-scrollbar{width:4px}
 .passes-list::-webkit-scrollbar-track{background:transparent}
@@ -363,7 +330,6 @@ body.app-active .app-shell{display:flex}
 .pass-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
 
 /* left colour stripe by class */
-/* CO1 (Btl-3): CSS Styling — thin vertical gradient stripe whose colour is determined by the flight class */
 .pass-stripe{width:5px;flex-shrink:0}
 .stripe-economy{background:linear-gradient(to bottom,#3b82f6,#60a5fa)}
 .stripe-business{background:linear-gradient(to bottom,#f59e0b,#fbbf24)}
@@ -391,7 +357,6 @@ body.app-active .app-shell{display:flex}
 .pass-dep{font-size:11px;color:var(--text3);margin-top:2px;}
 
 /* staff badge */
-/* CO1 (Btl-3): CSS Styling — inline-flex badge showing the issuing staff member's name on each boarding pass */
 .pass-staff{
   font-size:9px;font-weight:600;letter-spacing:.5px;
   color:var(--text3);
@@ -427,10 +392,14 @@ body.app-active .app-shell{display:flex}
 .void-btn:hover{background:#fef2f2}
 
 /* ── Footer ── */
-/* CO1 (Btl-3): CSS Styling — centred footer with border-top, muted colour and letter-spacing */
+.app-footer{
+  text-align:center;padding:16px;
+  font-size:11px;color:var(--text3);
+  border-top:1px solid var(--border);
+  letter-spacing:.5px;
+}
 
-/* CO1 (Btl-2/3): CSS — responsive @media breakpoints collapse grid columns and adjust padding for smaller screens */
-/* CO2 (Btl-2/3): Comprehensive CSS Layouts — grid drops to 1fr on tablet; sky-side hides entirely on mobile */
+/* CO5: Responsive design — media queries adjust layout for tablets and mobile */
 @media(max-width:900px){
   .two-col{grid-template-columns:1fr}
   .stats-row{grid-template-columns:repeat(2,1fr)}
@@ -438,6 +407,7 @@ body.app-active .app-shell{display:flex}
   .topnav{padding:0 16px}
 }
 @media(max-width:720px){
+  /* CO5: Mobile-first adaptation — hide sky panel, full-width form on small screens */
   .sky-side{display:none}
   .form-side{width:100%;min-width:unset;padding:32px 24px}
   .form-title{font-size:38px}
@@ -449,11 +419,12 @@ body.app-active .app-shell{display:flex}
 
 <!-- ══════════════════════════════════════
      AUTH OVERLAY
+     CO1: Basic HTML structure — div containers, id attributes
+     CO2: Semantic layout — login/register panels as structured HTML
 ══════════════════════════════════════ -->
-<!-- CO2 (Btl-2/3): CSS Layout — full-screen flex overlay; sky-side decorative panel + form-side login/register panel -->
-<!-- CO5 (Btl-3): Advanced Web Dev — <canvas id="skyCanvas"> driven by the Canvas 2D API animation loop in JS -->
 <div id="loginOverlay" class="auth-overlay">
   <div class="sky-side">
+  <!-- CO3: <canvas> element — used by JavaScript for animated sky drawing (see canvas section in JS) -->
     <canvas id="skyCanvas"></canvas>
     <div class="sky-ground"></div>
     <div class="sky-edge"></div>
@@ -472,10 +443,8 @@ body.app-active .app-shell{display:flex}
   </div>
 
   <div class="form-side" id="formSide">
-    <!-- CO2 (Btl-1/2/3): HTML Forms — login panel: text + password inputs with labels, error message span, submit + ghost buttons -->
-    <!-- CO3 (Btl-3): JS Essentials — loginBtn.onclick validates inputs and calls checkAuth(); Enter key listener on both fields -->
-    <!-- CO4 (Btl-3): DOM — goToRegister.onclick swaps loginPanel/registerPanel display; clearMsgs() clears error text -->
     <!-- LOGIN -->
+    <!-- CO2: HTML Form panel — semantic field grouping with labels and inputs -->
     <div id="loginPanel" class="form-panel">
       <div class="tag"><span class="tag-dot"></span>Staff Access</div>
       <h1 class="form-title">Welcome<br>Back.</h1>
@@ -506,10 +475,8 @@ body.app-active .app-shell{display:flex}
       <button class="btn-ghost" id="goToRegister">Create an account →</button>
     </div>
 
-    <!-- CO2 (Btl-1/2/3): HTML Forms — register panel: name/username/email/password fields in .row2 CSS Grid, error + success spans -->
-    <!-- CO3 (Btl-3): JS Essentials — registerBtn.onclick reads 5 fields, validates with length checks + regex email test -->
-    <!-- CO5 (Btl-3): Advanced — on success, setTimeout auto-switches back to login panel after showing success message -->
     <!-- REGISTER -->
+    <!-- CO2: HTML Registration Form — multiple input types: text, email, password with confirm -->
     <div id="registerPanel" class="form-panel" style="display:none">
       <div class="tag"><span class="tag-dot"></span>New Account</div>
       <h1 class="form-title">Join the<br>Crew.</h1>
@@ -570,13 +537,11 @@ body.app-active .app-shell{display:flex}
 
 <!-- ══════════════════════════════════════
      MAIN APP DASHBOARD
+     CO2: Semantic HTML tags — <nav>, <div> sections, <button>, <select>
+     CO4: DOM elements referenced and manipulated by JavaScript
 ══════════════════════════════════════ -->
-<!-- CO2 (Btl-2/3): Semantic Tags & Layout — app-shell wraps <nav>, stats grid, two-col booking+passes layout, and footer -->
-<!-- CO4 (Btl-3): DOM — hidden by default; revealed when checkAuth() adds 'app-active' class to body after login -->
 <div class="app-shell" id="mainApp">
 
-  <!-- CO2 (Btl-1/2): Semantic Tags — <nav> landmark element for the site navigation bar -->
-  <!-- CO4 (Btl-3): DOM — darkModeToggle.onclick toggles body.dark-mode; logoutBtn.onclick removes session from localStorage -->
   <!-- Top Nav -->
   <nav class="topnav">
     <div class="nav-brand">
@@ -595,8 +560,6 @@ body.app-active .app-shell{display:flex}
 
   <div class="app-content">
 
-    <!-- CO2 (Btl-2/3): CSS Grid Layout — 4-column stats row; each card holds an icon, a value span, and a label -->
-    <!-- CO4 (Btl-3): DOM — render() updates #st-total, #st-rev, #st-dest, #st-today textContent from live ticket data -->
     <!-- Stats Row -->
     <div class="stats-row" id="statsRow">
       <div class="stat-card">
@@ -624,10 +587,8 @@ body.app-active .app-shell{display:flex}
     <!-- Two-col: booking form + passes -->
     <div class="two-col">
 
-      <!-- CO2 (Btl-1/2/3): HTML Forms — booking form: text, number, date, time inputs and a <select> for cabin class, all with labels -->
-      <!-- CO3 (Btl-3): JS Essentials — bookBtn.onclick reads all field values, validates presence, generates random seat/flightID/gate -->
-      <!-- CO5 (Btl-3): Advanced — pushes ticket object to array and saves it to localStorage via saveTickets() -->
       <!-- BOOKING FORM -->
+      <!-- CO2: HTML form fields — text, number, date, time, select inputs with labels -->
       <div class="book-card">
         <div class="section-hdr">
           <div class="section-title">Issue New Ticket</div>
@@ -670,10 +631,9 @@ body.app-active .app-shell{display:flex}
         </button>
       </div>
 
-      <!-- CO2 (Btl-2/3): HTML Forms — passes toolbar: search text input + class filter <select> + clear-all button -->
-      <!-- CO4 (Btl-3): DOM — searchInput.oninput and classFilter.onchange both call render() to update the displayed list -->
-      <!-- CO3 (Btl-3): JS Essentials — render() filters tickets with .filter() + .includes() for search and strict match for class -->
       <!-- PASSES PANEL -->
+      <!-- CO2: Semantic section for displaying all boarding passes
+           CO4: ticketList div populated dynamically via DOM manipulation -->
       <div class="passes-card">
         <div class="section-hdr">
           <div class="section-title">All Boarding Passes</div>
@@ -706,24 +666,21 @@ body.app-active .app-shell{display:flex}
 <script>
 /* ══════════════════════════════════════════
    CANVAS — DAYTIME SKY ANIMATION
+   CO3: JavaScript programming — IIFE, variables, loops, functions
+   CO4: DOM API — getElementById, canvas getContext, requestAnimationFrame
+   CO5: Advanced JS — Canvas 2D API, animation loop, Math functions
 ══════════════════════════════════════════ */
-/* CO5 (Btl-1/2/3): Advanced Web Development — Canvas 2D API animation system:
-     - getContext('2d') to get the drawing surface                        (COI-1: Remembering the API)
-     - requestAnimationFrame(frame) for a smooth 60fps render loop        (COI-2: Understanding animation loops)
-     - createRadialGradient, arc, quadraticCurveTo for sun/clouds/birds   (COI-3: Applying drawing methods)
-     - window.addEventListener('resize') for responsive canvas sizing
-     - setTimeout(addPlane,...) for staggered plane spawning
-     - IIFE pattern to encapsulate all canvas state in its own scope */
 (function(){
   const cv=document.getElementById('skyCanvas');
   if(!cv) return;
   const cx=cv.getContext('2d');
+  /* CO3: Function definition — resize sets canvas dimensions to match layout */
   function resize(){
     const w=cv.offsetWidth||cv.clientWidth||cv.parentElement&&cv.parentElement.offsetWidth||800;
     const h=cv.offsetHeight||cv.clientHeight||cv.parentElement&&cv.parentElement.offsetHeight||600;
     cv.width=w; cv.height=h;
   }
-  /* delay first resize until layout is painted */
+  /* CO4: window event listener — resize event triggers canvas redraw */
   setTimeout(resize,0);
   window.addEventListener('resize',resize);
 
@@ -743,6 +700,7 @@ body.app-active .app-shell{display:flex}
     cx.fillStyle=disk; cx.fill();
   }
 
+  /* CO3: Array creation with Array.from() — generates cloud objects using Math.random() */
   const clouds=Array.from({length:7},(_,i)=>({
     x:i*(1/7)+Math.random()*.1, y:.08+Math.random()*.38,
     w:100+Math.random()*140, h:38+Math.random()*32,
@@ -844,37 +802,32 @@ body.app-active .app-shell{display:flex}
 })();
 
 /* ══════════════════════════════════════════
-   API CLIENT  (replaces localStorage store)
+   USER STORE
+   CO3: Arrow functions, ternary operators, JSON.parse / JSON.stringify
+   CO5: localStorage API — persistent client-side data storage
 ══════════════════════════════════════════ */
-const API = '/api';
+const getUsers  = ()=>JSON.parse(localStorage.getItem('ftms_users'))||[];
+const saveUsers = u=>localStorage.setItem('ftms_users',JSON.stringify(u));
+const getMe     = ()=>localStorage.getItem('ftms_currentUser')||null;
 
-/* JWT token stored in memory (cleared on page refresh — matches original behaviour) */
-let _token = null;
-let _currentUser = null;
-
-const getToken  = () => _token;
-const getMe     = () => _currentUser ? _currentUser.username : null;
-
-function authHeaders() {
-  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_token}` };
-}
-
-async function apiFetch(path, options = {}) {
-  const res = await fetch(API + path, options);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Request failed');
-  return data;
-}
+/* CO5: Shared ticket store — all staff share same localStorage key */
+const getTickets  = ()=>JSON.parse(localStorage.getItem('ftms_tickets'))||[];
+const saveTickets = t=>localStorage.setItem('ftms_tickets',JSON.stringify(t));
 
 /* ══════════════════════════════════════════
-   AUTH  (API-driven)
+   AUTH
+   CO4: DOM manipulation — show/hide elements, classList.add/remove
+        Reading from localStorage and updating UI based on auth state
 ══════════════════════════════════════════ */
 function checkAuth(){
-  if(_token && _currentUser){
+  if(getMe()){
     document.getElementById('loginOverlay').style.display='none';
     document.getElementById('mainApp').style.display='flex';
     document.body.classList.add('app-active');
-    document.getElementById('userLabel').textContent=(_currentUser.fullName||_currentUser.username);
+    const u=getUsers().find(u=>u.username===getMe());
+    if(u){
+      document.getElementById('userLabel').textContent=(u.fullName||u.username);
+    }
     render();
   } else {
     document.getElementById('loginOverlay').style.display='flex';
@@ -902,21 +855,18 @@ document.getElementById('goToLogin').onclick=()=>{
   clearMsgs();
 };
 
-document.getElementById('loginBtn').onclick=async()=>{
+/* CO4: Event handling — onclick listener reads form input values via DOM,
+        validates credentials, updates localStorage, shows/hides overlay */
+document.getElementById('loginBtn').onclick=()=>{
   const u=document.getElementById('loginUsername').value.trim();
   const p=document.getElementById('loginPassword').value;
   if(!u||!p){showMsg('loginError','Please enter username and password.');return;}
-  try {
-    const data = await apiFetch('/auth/login',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({username:u,password:p})
-    });
-    _token = data.token;
-    _currentUser = data.user;
+  const match=getUsers().find(x=>x.username===u&&x.password===p);
+  if(match){
+    localStorage.setItem('ftms_currentUser',u);
     checkAuth();
-  } catch(err) {
-    showMsg('loginError', err.message || 'Invalid username or password.');
+  } else {
+    showMsg('loginError','Invalid username or password.');
     const fs=document.getElementById('formSide');
     fs.classList.add('shake');
     setTimeout(()=>fs.classList.remove('shake'),450);
@@ -925,7 +875,9 @@ document.getElementById('loginBtn').onclick=async()=>{
 ['loginUsername','loginPassword'].forEach(id=>
   document.getElementById(id).addEventListener('keydown',e=>e.key==='Enter'&&document.getElementById('loginBtn').click()));
 
-document.getElementById('registerBtn').onclick=async()=>{
+/* CO3: Input validation logic — conditionals, regex test, string length checks
+   CO4: DOM interaction — reads all register form fields, writes user to localStorage */
+document.getElementById('registerBtn').onclick=()=>{
   const fn=document.getElementById('regFullName').value.trim();
   const un=document.getElementById('regUsername').value.trim();
   const em=document.getElementById('regEmail').value.trim();
@@ -938,31 +890,26 @@ document.getElementById('registerBtn').onclick=async()=>{
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return showMsg('registerError','Please enter a valid email.');
   if(pw.length<4) return showMsg('registerError','Password must be at least 4 characters.');
   if(pw!==cf) return showMsg('registerError','Passwords do not match.');
-  try {
-    await apiFetch('/auth/register',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({fullName:fn,username:un,email:em,password:pw})
-    });
-    ['regFullName','regUsername','regEmail','regPassword','regConfirmPassword']
-      .forEach(id=>document.getElementById(id).value='');
-    showMsg('registerSuccess','✓ Account created! Redirecting to sign in…');
-    setTimeout(()=>{
-      document.getElementById('registerPanel').style.display='none';
-      document.getElementById('loginPanel').style.display='block';
-      clearMsgs();
-      document.getElementById('loginUsername').value=un;
-    },1800);
-  } catch(err) {
-    showMsg('registerError', err.message || 'Registration failed.');
-  }
+  const users=getUsers();
+  if(users.find(u=>u.username===un)) return showMsg('registerError','Username already taken.');
+  if(users.find(u=>u.email===em)) return showMsg('registerError','Email already registered.');
+  users.push({fullName:fn,username:un,email:em,password:pw});
+  saveUsers(users);
+  ['regFullName','regUsername','regEmail','regPassword','regConfirmPassword']
+    .forEach(id=>document.getElementById(id).value='');
+  showMsg('registerSuccess','✓ Account created! Redirecting to sign in…');
+  setTimeout(()=>{
+    document.getElementById('registerPanel').style.display='none';
+    document.getElementById('loginPanel').style.display='block';
+    clearMsgs();
+    document.getElementById('loginUsername').value=un;
+  },1800);
 };
 ['regFullName','regUsername','regEmail','regPassword','regConfirmPassword'].forEach(id=>
   document.getElementById(id).addEventListener('keydown',e=>e.key==='Enter'&&document.getElementById('registerBtn').click()));
 
 document.getElementById('logoutBtn').onclick=()=>{
-  _token = null;
-  _currentUser = null;
+  localStorage.removeItem('ftms_currentUser');
   document.getElementById('loginUsername').value='';
   document.getElementById('loginPassword').value='';
   document.getElementById('loginPanel').style.display='block';
@@ -972,14 +919,11 @@ document.getElementById('logoutBtn').onclick=()=>{
 
 /* ══════════════════════════════════════════
    THEME
+   CO4: DOM event — DOMContentLoaded reads localStorage to restore theme
+   CO5: Dark mode toggle — classList.toggle, localStorage persistence
 ══════════════════════════════════════════ */
-/* CO5 (Btl-2/3): Advanced Web Dev — DOMContentLoaded restores dark-mode preference from localStorage on every page load */
-/* CO5 (Btl-3): Advanced — localStorage.removeItem('ftms_currentUser') ensures user always starts at login (session cleared) */
-/* CO4 (Btl-3): DOM Interactivity — darkModeToggle.onclick toggles body.classList 'dark-mode'; CSS variable tokens switch automatically */
-/* CO5 (Btl-3): Advanced — localStorage.setItem('theme',...) persists the chosen theme across sessions */
 window.addEventListener('DOMContentLoaded',()=>{
   if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark-mode');
-  /* _token is null on load → shows login screen */
   checkAuth();
 });
 document.getElementById('darkModeToggle').onclick=()=>{
@@ -988,9 +932,17 @@ document.getElementById('darkModeToggle').onclick=()=>{
 };
 
 /* ══════════════════════════════════════════
-   BOOKING  (API-driven)
+   BOOKING
+   CO3: Functions — genID() and genGate() use Math.random(), string operations
+   CO4: DOM event — bookBtn onclick reads form fields, pushes to array, saves, re-renders
 ══════════════════════════════════════════ */
-document.getElementById('bookBtn').onclick=async()=>{
+function genID(){
+  const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  return c[~~(Math.random()*26)]+c[~~(Math.random()*26)]+'-'+~~(1000+Math.random()*9000);
+}
+function genGate(){return ['A','B','C','D'][~~(Math.random()*4)]+(~~(Math.random()*25)+1);}
+
+document.getElementById('bookBtn').onclick=()=>{
   const name=document.getElementById('passengerName').value.trim();
   const dest=document.getElementById('destination').value.trim();
   const price=document.getElementById('ticketPrice').value;
@@ -998,70 +950,79 @@ document.getElementById('bookBtn').onclick=async()=>{
   const date=document.getElementById('flightDate').value;
   const time=document.getElementById('flightTime').value;
   if(!name||!dest||!price||!date||!time){alert('Please fill in all fields!');return;}
-  try {
-    await apiFetch('/tickets',{
-      method:'POST',
-      headers:authHeaders(),
-      body:JSON.stringify({name,dest,date,time,price,fClass})
-    });
-    ['passengerName','destination','ticketPrice','flightDate','flightTime']
-      .forEach(id=>document.getElementById(id).value='');
-    document.getElementById('flightClass').value='Economy';
-    render();
-  } catch(err) {
-    alert('Booking failed: '+err.message);
-  }
+  const tickets=getTickets();
+  tickets.push({
+    name,dest,date,time,price,fClass,
+    seat:(~~(Math.random()*50)+1)+String.fromCharCode(65+~~(Math.random()*6)),
+    flightID:genID(),gate:genGate(),
+    issuedBy:getMe(),
+    issuedAt:new Date().toISOString()
+  });
+  saveTickets(tickets);
+  /* clear form fields */
+  ['passengerName','destination','ticketPrice','flightDate','flightTime']
+    .forEach(id=>document.getElementById(id).value='');
+  document.getElementById('flightClass').value='Economy';
+  render();
 };
 
 /* ══════════════════════════════════════════
-   RENDER  (API-driven)
+   RENDER
+   CO3: Array methods — .sort(), .filter(), .reduce(), .map(), .forEach()
+   CO4: Dynamic DOM — createElement, innerHTML, appendChild to build ticket cards
+   CO5: Advanced JS — Set for unique destinations, template literals, regex formatting
 ══════════════════════════════════════════ */
-async function render(){
-  if(!_token) return;
+function getSorted(){
+  return getTickets().sort((a,b)=>new Date(a.date+'T'+a.time)-new Date(b.date+'T'+b.time));
+}
 
-  /* Stats */
-  try {
-    const s = await apiFetch('/tickets/stats',{headers:authHeaders()});
-    document.getElementById('st-total').textContent=s.totalTickets;
-    document.getElementById('st-rev').textContent='$'+s.revenue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
-    document.getElementById('st-dest').textContent=s.destinations;
-    document.getElementById('st-today').textContent=s.todayCount;
-  } catch { /* ignore stats errors */ }
+function render(){
+  const allTickets=getSorted();
+  const today=new Date().toISOString().split('T')[0];
+  const dests=new Set(allTickets.map(t=>t.dest.toLowerCase()));
+  const todayCount=allTickets.filter(t=>t.date===today).length;
+  const rev=allTickets.reduce((s,t)=>s+parseFloat(t.price||0),0);
 
-  /* Ticket list */
+  document.getElementById('st-total').textContent=allTickets.length;
+  document.getElementById('st-rev').textContent='$'+rev.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('st-dest').textContent=dests.size;
+  document.getElementById('st-today').textContent=todayCount;
+
   const search=(document.getElementById('searchInput').value||'').toLowerCase();
   const classF=document.getElementById('classFilter').value;
-  const params=new URLSearchParams();
-  if(search) params.set('search',search);
-  if(classF) params.set('fClass',classF);
 
-  let tickets=[];
-  try {
-    const data=await apiFetch('/tickets?'+params.toString(),{headers:authHeaders()});
-    tickets=data.tickets||[];
-  } catch { tickets=[]; }
+  let visible=allTickets.filter(t=>{
+    const matchS=!search||(t.name+t.dest+t.flightID+t.gate+t.seat+(t.issuedBy||'')).toLowerCase().includes(search);
+    const matchC=!classF||t.fClass===classF;
+    return matchS&&matchC;
+  });
 
-  document.getElementById('passCount').textContent=tickets.length+' pass'+(tickets.length!==1?'es':'');
+  document.getElementById('passCount').textContent=visible.length+' pass'+(visible.length!==1?'es':'');
 
   const list=document.getElementById('ticketList');
   list.innerHTML='';
 
-  if(tickets.length===0){
+  if(visible.length===0){
     list.innerHTML=`<div class="empty-state"><div class="empty-icon">🎫</div><div class="empty-text">${search||classF?'No passes match your filters':'No boarding passes issued yet'}</div></div>`;
     return;
   }
 
-  tickets.forEach(t=>{
+  /* find original index in full sorted array for delete */
+  visible.forEach(t=>{
+    const origIdx=allTickets.findIndex(x=>x.flightID===t.flightID);
     const stripeClass='stripe-'+t.fClass.toLowerCase().replace(' ','');
     const clsClass='cls-'+t.fClass.toLowerCase().replace(' ','');
-    const issuerName=t.issuedBy||'Unknown';
+    const users=getUsers();
+    const issuer=users.find(u=>u.username===t.issuedBy);
+    const issuerName=issuer?(issuer.fullName||t.issuedBy):(t.issuedBy||'Unknown');
+
     const div=document.createElement('div');
     div.className='pass-card';
     div.innerHTML=`
       <div class="pass-stripe ${stripeClass}"></div>
       <div class="pass-body">
         <div class="pass-top">
-          <span class="pass-id" onclick="showDetails('${t.flightID}')">${t.flightID}</span>
+          <span class="pass-id" onclick="showDetails(${origIdx})">${t.flightID}</span>
           <span class="pass-class ${clsClass}">${t.fClass.toUpperCase()}</span>
         </div>
         <div class="pass-name">${t.name}</div>
@@ -1075,43 +1036,40 @@ async function render(){
       <div class="pass-stub">
         <div class="stub-item"><div class="stub-lbl">Gate</div><div class="stub-val">${t.gate}</div></div>
         <div class="stub-item"><div class="stub-lbl">Seat</div><div class="stub-val">${t.seat}</div></div>
-        <button class="void-btn" onclick="removeTicket('${t.flightID}')">VOID</button>
+        <button class="void-btn" onclick="removeTicket(${origIdx})">VOID</button>
       </div>`;
     list.appendChild(div);
   });
 }
 
-/* keep a local cache of last-fetched tickets for showDetails */
-let _ticketCache=[];
-async function _refreshCache(){
-  try{const d=await apiFetch('/tickets',{headers:authHeaders()});_ticketCache=d.tickets||[];}catch{}
-}
-
-window.showDetails=async(flightID)=>{
-  await _refreshCache();
-  const t=_ticketCache.find(x=>x.flightID===flightID);
-  if(!t) return;
+/* CO4: window-scoped function — called from inline onclick in dynamically generated HTML
+        Uses alert() for DOM-level dialog interaction */
+window.showDetails=(index)=>{
+  const t=getSorted()[index];
   const w=['☀️ Sunny','☁️ Cloudy','🌧️ Rainy','🌬️ Windy'][~~(Math.random()*4)];
-  alert(`✈ BOARDING PASS — ${t.flightID}\n${'─'.repeat(36)}\nPASSENGER : ${t.name}\nDESTINATION: ${t.dest.toUpperCase()}\nDEPARTURE  : ${t.date} at ${t.time}\nGATE / SEAT: ${t.gate} / ${t.seat}\nCABIN CLASS: ${t.fClass}\nISSUED BY  : ${t.issuedBy||'Unknown'}\n\n🌍 ${t.dest.toUpperCase()} WEATHER: ${w}\n${'─'.repeat(36)}\nStatus: ✅ Confirmed — On Time`);
+  const users=getUsers();
+  const issuer=users.find(u=>u.username===t.issuedBy);
+  const issuerName=issuer?(issuer.fullName||t.issuedBy):(t.issuedBy||'Unknown');
+  alert(`✈ BOARDING PASS — ${t.flightID}\n${'─'.repeat(36)}\nPASSENGER : ${t.name}\nDESTINATION: ${t.dest.toUpperCase()}\nDEPARTURE  : ${t.date} at ${t.time}\nGATE / SEAT: ${t.gate} / ${t.seat}\nCABIN CLASS: ${t.fClass}\nISSUED BY  : ${issuerName}\n\n🌍 ${t.dest.toUpperCase()} WEATHER: ${w}\n${'─'.repeat(36)}\nStatus: ✅ Confirmed — On Time`);
 };
 
-window.removeTicket=async(flightID)=>{
+/* CO4: DOM event via inline onclick — confirm dialog, splice array, save, re-render */
+window.removeTicket=(index)=>{
   if(!confirm('Void this boarding pass?')) return;
-  try {
-    await apiFetch('/tickets/'+flightID,{method:'DELETE',headers:authHeaders()});
-    render();
-  } catch(err) { alert('Error: '+err.message); }
+  const tickets=getSorted();
+  tickets.splice(index,1);
+  saveTickets(tickets);
+  render();
 };
 
+/* CO4: Event listeners — oninput and onchange trigger live filtering of ticket list */
 document.getElementById('searchInput').oninput=render;
 document.getElementById('classFilter').onchange=render;
 
-document.getElementById('clearAllBtn').onclick=async()=>{
+/* CO4: onclick event — confirm dialog before clearing all stored tickets */
+document.getElementById('clearAllBtn').onclick=()=>{
   if(confirm('Delete ALL boarding passes? This cannot be undone.')){
-    try {
-      await apiFetch('/tickets',{method:'DELETE',headers:authHeaders()});
-      render();
-    } catch(err) { alert('Error: '+err.message); }
+    saveTickets([]); render();
   }
 };
 </script>
