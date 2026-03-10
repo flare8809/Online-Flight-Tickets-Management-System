@@ -844,41 +844,37 @@ body.app-active .app-shell{display:flex}
 })();
 
 /* ══════════════════════════════════════════
-   USER STORE
+   API CLIENT  (replaces localStorage store)
 ══════════════════════════════════════════ */
-/* CO5 (Btl-1/2/3): Advanced Web Development — localStorage persistence layer:
-     - getUsers / saveUsers  → store registered user array as JSON        (COI-1: Remembering the API)
-     - getMe / ftms_currentUser → track active login session              (COI-2: Understanding session state)
-     - getTickets / saveTickets → persist all boarding passes globally    (COI-3: Applying full data store) */
-const getUsers  = ()=>JSON.parse(localStorage.getItem('ftms_users'))||[];
-const saveUsers = u=>localStorage.setItem('ftms_users',JSON.stringify(u));
-const getMe     = ()=>localStorage.getItem('ftms_currentUser')||null;
+const API = '/api';
 
-/* tickets are stored globally (shared across all staff) */
-const getTickets  = ()=>JSON.parse(localStorage.getItem('ftms_tickets'))||[];
-const saveTickets = t=>localStorage.setItem('ftms_tickets',JSON.stringify(t));
+/* JWT token stored in memory (cleared on page refresh — matches original behaviour) */
+let _token = null;
+let _currentUser = null;
+
+const getToken  = () => _token;
+const getMe     = () => _currentUser ? _currentUser.username : null;
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_token}` };
+}
+
+async function apiFetch(path, options = {}) {
+  const res = await fetch(API + path, options);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
 
 /* ══════════════════════════════════════════
-   AUTH
+   AUTH  (API-driven)
 ══════════════════════════════════════════ */
-/* CO4 (Btl-2/3): DOM Interactivity — checkAuth() shows/hides loginOverlay vs mainApp via style.display;
-   adds/removes body class 'app-active'; sets #userLabel textContent to logged-in user's name */
-/* CO3 (Btl-3): JS Essentials — clearMsgs() uses forEach over an ID array to reset error/success elements */
-/* CO3 (Btl-3): JS Essentials — showMsg() sets element textContent and style.display to surface validation feedback */
-/* CO4 (Btl-3): DOM — goToRegister / goToLogin onclick handlers swap panel visibility with style.display */
-/* CO3 (Btl-3): JS Essentials — loginBtn.onclick reads inputs, validates with conditionals, uses .find() to match credentials */
-/* CO4 (Btl-3): DOM — shake animation triggered on wrong login: classList.add('shake') + setTimeout to remove it */
-/* CO3 (Btl-3): JS Essentials — registerBtn.onclick validates 5 fields: length checks, regex email, duplicate user/email */
-/* CO5 (Btl-3): Advanced — saveUsers() persists new account to localStorage; setTimeout redirects to login after success */
 function checkAuth(){
-  if(getMe()){
+  if(_token && _currentUser){
     document.getElementById('loginOverlay').style.display='none';
     document.getElementById('mainApp').style.display='flex';
     document.body.classList.add('app-active');
-    const u=getUsers().find(u=>u.username===getMe());
-    if(u){
-      document.getElementById('userLabel').textContent=(u.fullName||u.username);
-    }
+    document.getElementById('userLabel').textContent=(_currentUser.fullName||_currentUser.username);
     render();
   } else {
     document.getElementById('loginOverlay').style.display='flex';
@@ -906,16 +902,21 @@ document.getElementById('goToLogin').onclick=()=>{
   clearMsgs();
 };
 
-document.getElementById('loginBtn').onclick=()=>{
+document.getElementById('loginBtn').onclick=async()=>{
   const u=document.getElementById('loginUsername').value.trim();
   const p=document.getElementById('loginPassword').value;
   if(!u||!p){showMsg('loginError','Please enter username and password.');return;}
-  const match=getUsers().find(x=>x.username===u&&x.password===p);
-  if(match){
-    localStorage.setItem('ftms_currentUser',u);
+  try {
+    const data = await apiFetch('/auth/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:u,password:p})
+    });
+    _token = data.token;
+    _currentUser = data.user;
     checkAuth();
-  } else {
-    showMsg('loginError','Invalid username or password.');
+  } catch(err) {
+    showMsg('loginError', err.message || 'Invalid username or password.');
     const fs=document.getElementById('formSide');
     fs.classList.add('shake');
     setTimeout(()=>fs.classList.remove('shake'),450);
@@ -924,7 +925,7 @@ document.getElementById('loginBtn').onclick=()=>{
 ['loginUsername','loginPassword'].forEach(id=>
   document.getElementById(id).addEventListener('keydown',e=>e.key==='Enter'&&document.getElementById('loginBtn').click()));
 
-document.getElementById('registerBtn').onclick=()=>{
+document.getElementById('registerBtn').onclick=async()=>{
   const fn=document.getElementById('regFullName').value.trim();
   const un=document.getElementById('regUsername').value.trim();
   const em=document.getElementById('regEmail').value.trim();
@@ -937,26 +938,31 @@ document.getElementById('registerBtn').onclick=()=>{
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return showMsg('registerError','Please enter a valid email.');
   if(pw.length<4) return showMsg('registerError','Password must be at least 4 characters.');
   if(pw!==cf) return showMsg('registerError','Passwords do not match.');
-  const users=getUsers();
-  if(users.find(u=>u.username===un)) return showMsg('registerError','Username already taken.');
-  if(users.find(u=>u.email===em)) return showMsg('registerError','Email already registered.');
-  users.push({fullName:fn,username:un,email:em,password:pw});
-  saveUsers(users);
-  ['regFullName','regUsername','regEmail','regPassword','regConfirmPassword']
-    .forEach(id=>document.getElementById(id).value='');
-  showMsg('registerSuccess','✓ Account created! Redirecting to sign in…');
-  setTimeout(()=>{
-    document.getElementById('registerPanel').style.display='none';
-    document.getElementById('loginPanel').style.display='block';
-    clearMsgs();
-    document.getElementById('loginUsername').value=un;
-  },1800);
+  try {
+    await apiFetch('/auth/register',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({fullName:fn,username:un,email:em,password:pw})
+    });
+    ['regFullName','regUsername','regEmail','regPassword','regConfirmPassword']
+      .forEach(id=>document.getElementById(id).value='');
+    showMsg('registerSuccess','✓ Account created! Redirecting to sign in…');
+    setTimeout(()=>{
+      document.getElementById('registerPanel').style.display='none';
+      document.getElementById('loginPanel').style.display='block';
+      clearMsgs();
+      document.getElementById('loginUsername').value=un;
+    },1800);
+  } catch(err) {
+    showMsg('registerError', err.message || 'Registration failed.');
+  }
 };
 ['regFullName','regUsername','regEmail','regPassword','regConfirmPassword'].forEach(id=>
   document.getElementById(id).addEventListener('keydown',e=>e.key==='Enter'&&document.getElementById('registerBtn').click()));
 
 document.getElementById('logoutBtn').onclick=()=>{
-  localStorage.removeItem('ftms_currentUser');
+  _token = null;
+  _currentUser = null;
   document.getElementById('loginUsername').value='';
   document.getElementById('loginPassword').value='';
   document.getElementById('loginPanel').style.display='block';
@@ -973,9 +979,7 @@ document.getElementById('logoutBtn').onclick=()=>{
 /* CO5 (Btl-3): Advanced — localStorage.setItem('theme',...) persists the chosen theme across sessions */
 window.addEventListener('DOMContentLoaded',()=>{
   if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark-mode');
-  /* CO5 (Btl-3): Always redirect to login on page load — clear any saved session so
-     the user must authenticate fresh every time the page is opened or refreshed */
-  localStorage.removeItem('ftms_currentUser');
+  /* _token is null on load → shows login screen */
   checkAuth();
 });
 document.getElementById('darkModeToggle').onclick=()=>{
@@ -984,20 +988,9 @@ document.getElementById('darkModeToggle').onclick=()=>{
 };
 
 /* ══════════════════════════════════════════
-   BOOKING
+   BOOKING  (API-driven)
 ══════════════════════════════════════════ */
-/* CO3 (Btl-2/3): JS Programming Essentials — genID() uses Math.random(), string indexing, and ~~ (floor) to build a random code */
-/* CO3 (Btl-2/3): JS Programming Essentials — genGate() uses an array literal + random index to pick a gate letter and number */
-/* CO3 (Btl-3): Applying JS — bookBtn.onclick reads 6 form values, validates all are filled, builds and pushes a ticket object */
-/* CO5 (Btl-3): Advanced Web Dev — saveTickets() writes the updated array to localStorage; getMe() reads current session as issuer */
-/* CO4 (Btl-3): DOM Interactivity — forEach clears each form field via getElementById after booking; render() refreshes the list */
-function genID(){
-  const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  return c[~~(Math.random()*26)]+c[~~(Math.random()*26)]+'-'+~~(1000+Math.random()*9000);
-}
-function genGate(){return ['A','B','C','D'][~~(Math.random()*4)]+(~~(Math.random()*25)+1);}
-
-document.getElementById('bookBtn').onclick=()=>{
+document.getElementById('bookBtn').onclick=async()=>{
   const name=document.getElementById('passengerName').value.trim();
   const dest=document.getElementById('destination').value.trim();
   const price=document.getElementById('ticketPrice').value;
@@ -1005,84 +998,70 @@ document.getElementById('bookBtn').onclick=()=>{
   const date=document.getElementById('flightDate').value;
   const time=document.getElementById('flightTime').value;
   if(!name||!dest||!price||!date||!time){alert('Please fill in all fields!');return;}
-  const tickets=getTickets();
-  tickets.push({
-    name,dest,date,time,price,fClass,
-    seat:(~~(Math.random()*50)+1)+String.fromCharCode(65+~~(Math.random()*6)),
-    flightID:genID(),gate:genGate(),
-    issuedBy:getMe(),
-    issuedAt:new Date().toISOString()
-  });
-  saveTickets(tickets);
-  /* clear form fields */
-  ['passengerName','destination','ticketPrice','flightDate','flightTime']
-    .forEach(id=>document.getElementById(id).value='');
-  document.getElementById('flightClass').value='Economy';
-  render();
+  try {
+    await apiFetch('/tickets',{
+      method:'POST',
+      headers:authHeaders(),
+      body:JSON.stringify({name,dest,date,time,price,fClass})
+    });
+    ['passengerName','destination','ticketPrice','flightDate','flightTime']
+      .forEach(id=>document.getElementById(id).value='');
+    document.getElementById('flightClass').value='Economy';
+    render();
+  } catch(err) {
+    alert('Booking failed: '+err.message);
+  }
 };
 
 /* ══════════════════════════════════════════
-   RENDER
+   RENDER  (API-driven)
 ══════════════════════════════════════════ */
-/* CO3 (Btl-2/3): JS Essentials — getSorted() uses .sort() with Date comparison for chronological order */
-/* CO3 (Btl-2/3): JS Essentials — render() uses .filter(), .reduce(), new Set(), .map(), .findIndex(), .find() on the ticket array */
-/* CO4 (Btl-3): DOM Interactivity — render() updates 4 stat card textContent values from computed ticket data */
-/* CO4 (Btl-3): DOM Interactivity — list.innerHTML='' clears old cards; document.createElement + innerHTML + appendChild builds each new card */
-/* CO3 (Btl-3): JS Essentials — filter logic: search uses .toLowerCase() + .includes(); class filter uses strict equality */
-/* CO4 (Btl-3): DOM — showDetails() uses alert() with a template literal string to display full boarding pass info */
-/* CO4 (Btl-3): DOM — removeTicket() uses confirm() dialog, splices the array, saves, and calls render() to refresh */
-/* CO5 (Btl-3): Advanced — clearAllBtn.onclick calls saveTickets([]) to wipe all ticket data from localStorage */
-function getSorted(){
-  return getTickets().sort((a,b)=>new Date(a.date+'T'+a.time)-new Date(b.date+'T'+b.time));
-}
+async function render(){
+  if(!_token) return;
 
-function render(){
-  const allTickets=getSorted();
-  const today=new Date().toISOString().split('T')[0];
-  const dests=new Set(allTickets.map(t=>t.dest.toLowerCase()));
-  const todayCount=allTickets.filter(t=>t.date===today).length;
-  const rev=allTickets.reduce((s,t)=>s+parseFloat(t.price||0),0);
+  /* Stats */
+  try {
+    const s = await apiFetch('/tickets/stats',{headers:authHeaders()});
+    document.getElementById('st-total').textContent=s.totalTickets;
+    document.getElementById('st-rev').textContent='$'+s.revenue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    document.getElementById('st-dest').textContent=s.destinations;
+    document.getElementById('st-today').textContent=s.todayCount;
+  } catch { /* ignore stats errors */ }
 
-  document.getElementById('st-total').textContent=allTickets.length;
-  document.getElementById('st-rev').textContent='$'+rev.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
-  document.getElementById('st-dest').textContent=dests.size;
-  document.getElementById('st-today').textContent=todayCount;
-
+  /* Ticket list */
   const search=(document.getElementById('searchInput').value||'').toLowerCase();
   const classF=document.getElementById('classFilter').value;
+  const params=new URLSearchParams();
+  if(search) params.set('search',search);
+  if(classF) params.set('fClass',classF);
 
-  let visible=allTickets.filter(t=>{
-    const matchS=!search||(t.name+t.dest+t.flightID+t.gate+t.seat+(t.issuedBy||'')).toLowerCase().includes(search);
-    const matchC=!classF||t.fClass===classF;
-    return matchS&&matchC;
-  });
+  let tickets=[];
+  try {
+    const data=await apiFetch('/tickets?'+params.toString(),{headers:authHeaders()});
+    tickets=data.tickets||[];
+  } catch { tickets=[]; }
 
-  document.getElementById('passCount').textContent=visible.length+' pass'+(visible.length!==1?'es':'');
+  document.getElementById('passCount').textContent=tickets.length+' pass'+(tickets.length!==1?'es':'');
 
   const list=document.getElementById('ticketList');
   list.innerHTML='';
 
-  if(visible.length===0){
+  if(tickets.length===0){
     list.innerHTML=`<div class="empty-state"><div class="empty-icon">🎫</div><div class="empty-text">${search||classF?'No passes match your filters':'No boarding passes issued yet'}</div></div>`;
     return;
   }
 
-  /* find original index in full sorted array for delete */
-  visible.forEach(t=>{
-    const origIdx=allTickets.findIndex(x=>x.flightID===t.flightID);
+  tickets.forEach(t=>{
     const stripeClass='stripe-'+t.fClass.toLowerCase().replace(' ','');
     const clsClass='cls-'+t.fClass.toLowerCase().replace(' ','');
-    const users=getUsers();
-    const issuer=users.find(u=>u.username===t.issuedBy);
-    const issuerName=issuer?(issuer.fullName||t.issuedBy):(t.issuedBy||'Unknown');
-
+    const issuerName=t.issuedBy||'Unknown';
     const div=document.createElement('div');
     div.className='pass-card';
     div.innerHTML=`
       <div class="pass-stripe ${stripeClass}"></div>
       <div class="pass-body">
         <div class="pass-top">
-          <span class="pass-id" onclick="showDetails(${origIdx})">${t.flightID}</span>
+          <span class="pass-id" onclick="showDetails('${t.flightID}')">${t.flightID}</span>
           <span class="pass-class ${clsClass}">${t.fClass.toUpperCase()}</span>
         </div>
         <div class="pass-name">${t.name}</div>
@@ -1096,35 +1075,43 @@ function render(){
       <div class="pass-stub">
         <div class="stub-item"><div class="stub-lbl">Gate</div><div class="stub-val">${t.gate}</div></div>
         <div class="stub-item"><div class="stub-lbl">Seat</div><div class="stub-val">${t.seat}</div></div>
-        <button class="void-btn" onclick="removeTicket(${origIdx})">VOID</button>
+        <button class="void-btn" onclick="removeTicket('${t.flightID}')">VOID</button>
       </div>`;
     list.appendChild(div);
   });
 }
 
-window.showDetails=(index)=>{
-  const t=getSorted()[index];
+/* keep a local cache of last-fetched tickets for showDetails */
+let _ticketCache=[];
+async function _refreshCache(){
+  try{const d=await apiFetch('/tickets',{headers:authHeaders()});_ticketCache=d.tickets||[];}catch{}
+}
+
+window.showDetails=async(flightID)=>{
+  await _refreshCache();
+  const t=_ticketCache.find(x=>x.flightID===flightID);
+  if(!t) return;
   const w=['☀️ Sunny','☁️ Cloudy','🌧️ Rainy','🌬️ Windy'][~~(Math.random()*4)];
-  const users=getUsers();
-  const issuer=users.find(u=>u.username===t.issuedBy);
-  const issuerName=issuer?(issuer.fullName||t.issuedBy):(t.issuedBy||'Unknown');
-  alert(`✈ BOARDING PASS — ${t.flightID}\n${'─'.repeat(36)}\nPASSENGER : ${t.name}\nDESTINATION: ${t.dest.toUpperCase()}\nDEPARTURE  : ${t.date} at ${t.time}\nGATE / SEAT: ${t.gate} / ${t.seat}\nCABIN CLASS: ${t.fClass}\nISSUED BY  : ${issuerName}\n\n🌍 ${t.dest.toUpperCase()} WEATHER: ${w}\n${'─'.repeat(36)}\nStatus: ✅ Confirmed — On Time`);
+  alert(`✈ BOARDING PASS — ${t.flightID}\n${'─'.repeat(36)}\nPASSENGER : ${t.name}\nDESTINATION: ${t.dest.toUpperCase()}\nDEPARTURE  : ${t.date} at ${t.time}\nGATE / SEAT: ${t.gate} / ${t.seat}\nCABIN CLASS: ${t.fClass}\nISSUED BY  : ${t.issuedBy||'Unknown'}\n\n🌍 ${t.dest.toUpperCase()} WEATHER: ${w}\n${'─'.repeat(36)}\nStatus: ✅ Confirmed — On Time`);
 };
 
-window.removeTicket=(index)=>{
+window.removeTicket=async(flightID)=>{
   if(!confirm('Void this boarding pass?')) return;
-  const tickets=getSorted();
-  tickets.splice(index,1);
-  saveTickets(tickets);
-  render();
+  try {
+    await apiFetch('/tickets/'+flightID,{method:'DELETE',headers:authHeaders()});
+    render();
+  } catch(err) { alert('Error: '+err.message); }
 };
 
 document.getElementById('searchInput').oninput=render;
 document.getElementById('classFilter').onchange=render;
 
-document.getElementById('clearAllBtn').onclick=()=>{
+document.getElementById('clearAllBtn').onclick=async()=>{
   if(confirm('Delete ALL boarding passes? This cannot be undone.')){
-    saveTickets([]); render();
+    try {
+      await apiFetch('/tickets',{method:'DELETE',headers:authHeaders()});
+      render();
+    } catch(err) { alert('Error: '+err.message); }
   }
 };
 </script>
